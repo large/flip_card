@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'flip_card.dart';
 
 Widget _fill(Widget child) => Positioned.fill(child: child);
+
 Widget _noop(Widget child) => child;
 
 /// The transition used internally by [FlipCard]
@@ -148,6 +149,8 @@ class _FlipCardTransitionState extends State<FlipCardTransition> {
     final isFront = child == widget.front;
     final showingFront = _currentSide == CardSide.front;
 
+    debugPrint("_isFront: $isFront - showingFront: $showingFront");
+
     /// pointer events that would reach the backside of the card should be
     /// ignored
     return IgnorePointer(
@@ -190,6 +193,19 @@ class FlipTransition extends AnimatedWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Do no do any transforming while animation is not running.
+    //If widget is putted into another matrix it will move around
+    if (!animation.isAnimating) {
+      //The front has always finished animation value 0.0
+      //When not 0.0 show nothing
+      if(animation.value == 0.0) {
+        return child;
+      } else {
+        return SizedBox();
+      }
+    }
+
+    //Do transition when animation is running
     final transform = Matrix4.identity();
     transform.setEntry(3, 2, 0.001);
     switch (direction) {
@@ -204,7 +220,7 @@ class FlipTransition extends AnimatedWidget {
     return Transform(
       transform: transform,
       alignment: FractionalOffset.center,
-      filterQuality: FilterQuality.none,
+      filterQuality: FilterQuality.medium,
       child: child,
     );
   }

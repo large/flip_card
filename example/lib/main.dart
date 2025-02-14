@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
+import 'package:flutter_spinner_item_selector/flutter_spinner_item_selector.dart';
 
 void main() => runApp(const MyApp());
 
@@ -47,43 +48,60 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('FlipCard'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 64.0),
-        child: SizedBox.expand(
-          child: _buildCard(context),
+      body: SizedBox(
+        height: 600,
+        width: double.infinity,
+        child: SpinnerItemSelector<Widget>(
+          items: [_buildCard(context), _buildCard(context)],
+          height: 600,
+          width: double.infinity,
+          itemHeight: 500,
+          itemWidth: 600,
+          selectedItemToWidget: (item) {
+            return item;
+          },
+          nonSelectedItemToWidget: (item) {
+            return item;
+          },
+          onSelectedItemChanged: (item) {
+            //return item;
+          },
+          spinnerBgColor: Colors.greenAccent,
         ),
       ),
       bottomNavigationBar: Material(
         elevation: 3.0,
         surfaceTintColor: theme.colorScheme.surfaceTint,
-        child: SizedBox(
-          height: 80.0,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                FilledButton(
-                  onPressed: () => _controller.flip(),
-                  child: const Text('Toggle'),
-                ),
-                const SizedBox(width: 8.0),
-                FilledButton.icon(
-                  onPressed: () async {
-                    await _controller.skew(skewed ? 0.0 : 0.2);
-                    setState(() => skewed = !skewed);
-                  },
-                  icon: skewed
-                      ? const Icon(Icons.circle)
-                      : const Icon(Icons.circle_outlined),
-                  label: const Text('Skew'),
-                ),
-                const SizedBox(width: 8.0),
-                FilledButton(
-                  onPressed: () async => await _controller.hint(),
-                  child: const Text('Hint'),
-                ),
-              ],
+        child: SafeArea(
+          child: SizedBox(
+            height: 90.0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  FilledButton(
+                    onPressed: () => _controller.flip(),
+                    child: const Text('Toggle'),
+                  ),
+                  FilledButton.icon(
+                    onPressed: () async {
+                      await _controller.skew(skewed ? 0.0 : 0.2);
+                      setState(() => skewed = !skewed);
+                    },
+                    icon: skewed
+                        ? const Icon(Icons.circle)
+                        : const Icon(Icons.circle_outlined),
+                    label: const Text('Skew'),
+                  ),
+                  FilledButton(
+                    onPressed: () async => await _controller.hint(),
+                    child: const Text('Hint'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -105,12 +123,12 @@ class _HomePageState extends State<HomePage> {
       duration: const Duration(milliseconds: 1000),
       controller: _controller,
       onFlipDone: (status) {
-        // ignore: avoid_print
-        print(status);
+        debugPrint(status.toString());
       },
       front: Card(
         color: theme.colorScheme.primary,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text('Front', style: titleStyle),
@@ -129,6 +147,7 @@ class _HomePageState extends State<HomePage> {
       back: Card(
         color: theme.colorScheme.secondary,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
