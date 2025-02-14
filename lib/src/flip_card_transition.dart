@@ -149,8 +149,6 @@ class _FlipCardTransitionState extends State<FlipCardTransition> {
     final isFront = child == widget.front;
     final showingFront = _currentSide == CardSide.front;
 
-    debugPrint("_isFront: $isFront - showingFront: $showingFront");
-
     /// pointer events that would reach the backside of the card should be
     /// ignored
     return IgnorePointer(
